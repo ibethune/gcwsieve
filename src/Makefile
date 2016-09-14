@@ -201,10 +201,13 @@ endif
 #
 ifeq ($(strip $(ARCH)),x86-64-osx)
 DEBUG_CFLAGS=-g -O3 -ffast-math -mdynamic-no-pic -march=nocona -arch x86_64
-OPT_CFLAGS=-O3 -ffast-math -march=nocona -arch x86_64 -fomit-frame-pointer -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5
+OPT_CFLAGS=-O3 -ffast-math -march=nocona -arch x86_64 -fomit-frame-pointer -isysroot /Developer/SDKs/MacOSX10.9.sdk -mmacosx-version-min=10.5
 CPPFLAGS=-Wall -DDEFAULT_L1_CACHE_SIZE=32 -DDEFAULT_L2_CACHE_SIZE=512
 ASFLAGS=-mdynamic-no-pic -march=nocona -arch x86_64
-LDFLAGS=-arch x86_64 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5
+LDFLAGS=-arch x86_64 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.9.sdk -mmacosx-version-min=10.5
+BOINC_CPPFLAGS=-DBOINC -I../../boinc_707/api
+BOINC_LDFLAGS=-L../../boinc_707/mac_build/build/Deployment
+BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread
 endif
 
 
