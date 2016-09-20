@@ -7,7 +7,7 @@
 
 MAJOR_VER=1
 MINOR_VER=3
-PATCH_VER=8
+PATCH_VER=9
 
 # Set DEBUG=yes to compile with debugging information and internal checks.
 #

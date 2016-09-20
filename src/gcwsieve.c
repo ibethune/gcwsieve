@@ -681,12 +681,10 @@ int main(int argc, char **argv)
   }
 
 #if BOINC
-  if (factor_count == 0) /* Ensure a non-empty factors file exists */
-  {
-    FILE *file = xfopen(factors_file_name,"a",error);
-    fprintf(file,"no factors\n");
-    fclose(file);
-  }
+  /* Mark that the sieve was completed successfully */
+  FILE *file = xfopen(factors_file_name,"a",error);
+  fprintf(file,"end of sieve\n");
+  fclose(file);
   boinc_finish(0);
 #endif
 
