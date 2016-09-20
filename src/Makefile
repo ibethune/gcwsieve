@@ -196,11 +196,15 @@ endif
 # Intel x86 with OS X
 #
 ifeq ($(strip $(ARCH)),x86-osx)
+CC=gcc-mp-4.8
 DEBUG_CFLAGS=-g -O3 -ffast-math -mdynamic-no-pic -march=prescott -arch i386
-OPT_CFLAGS=-O3 -ffast-math -mdynamic-no-pic -march=prescott -arch i386 -fomit-frame-pointer -isysroot /Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4
+OPT_CFLAGS=-O3 -ffast-math -mdynamic-no-pic -march=prescott -arch i386 -fomit-frame-pointer -isysroot /Developer/SDKs/MacOSX10.9.sdk -mmacosx-version-min=10.5
 CPPFLAGS=-Wall -DDEFAULT_L1_CACHE_SIZE=32 -DDEFAULT_L2_CACHE_SIZE=512
 ASFLAGS=-mdynamic-no-pic -march=prescott -arch i386
-LDFLAGS=-arch i386 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4
+LDFLAGS=-arch i386 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5
+BOINC_CPPFLAGS=-DBOINC -I../../boinc_707/api
+BOINC_LDFLAGS=-L../../boinc_707/mac_build/build/Deployment
+BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread
 endif
 
 # Intel x86_64 with OS X
@@ -288,7 +292,7 @@ PATH1_FLAGS+= -DSWIZZLE=4
 PATH2_FLAGS+= -DSWIZZLE=6
 CPPFLAGS+= -DPREFETCH_OPT
 endif
-ifeq ($(strip $(ARCH)),x86-64-osx)
+ifeq ($(strip $(ARCH)),x86-osx)
 ASM_OBJS=misc-i386.o mulmod-i386.o powmod-sse2.o btop-x86-sse2.o
 LOOP_OBJS=loop-x86-sse2.o loop-x86-sse2.p.o
 PATH1_FLAGS+= -DSWIZZLE=4
@@ -315,7 +319,7 @@ endif
 CPPFLAGS += $(BOINC_CPPFLAGS)
 LDFLAGS += $(BOINC_LDFLAGS)
 
-CC=gcc
+CC?=gcc
 LDLIBS=-lm $(BOINC_LIBS)
 
 TAR=tar -c
