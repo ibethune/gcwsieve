@@ -18,12 +18,15 @@
 #include <time.h>
 #include <getopt.h>
 #include <errno.h>
+extern "C" {
 #include "gcwsieve.h"
+}
 #include "version.h"
 #include "arithmetic.h"
 
 #if BOINC
 #include "boinc_api.h"
+#include "app_ipc.h"
 #endif
 
 #ifdef _MSC_VER
@@ -34,6 +37,7 @@
 #define NAME "gcwsieve"
 #define DESC "A sieve for Generalised Cullen/Woodall numbers n*b^n+/-1"
 
+time_t last_trickle;
 const char *output_file_name = NULL;
 const char *factors_file_name = NULL;
 const char *checkpoint_file_name = NULL;
@@ -358,7 +362,12 @@ int main(int argc, char **argv)
   int want_help = 0;
 
 #if BOINC
-  boinc_init();
+  BOINC_OPTIONS options;
+  boinc_options_defaults(options);
+# if BOINC_MAJOR_VERSION < 7 || (BOINC_MAJOR_VERSION == 7 && BOINC_MINOR_VERSION < 5)
+  options.handle_trickle_ups = true;        // We may periodically report status
+# endif
+  boinc_init_options(&options);
 #endif
 
   set_accumulated_time(0.0);
@@ -595,6 +604,8 @@ int main(int argc, char **argv)
   if (n_min >= n_max)
     error("-n --nmin N0 and -N --nmax N1 must satisfy N0 < N1.");
 
+  last_trickle = time(NULL); // Start trickle timer
+
 #ifdef SMALL_P
   if (begin_opt)
   {
@@ -759,6 +770,44 @@ static void update_work_file(const char *file_name)
   for (j = 0; j < i; j++)
     free(lines[j]);
 }
+
+// Function to control trickles to the BOINC server
+// Adapted from genefer (http://www.assembla.com/spaces/genefer)
+
+void handle_trickle_up()
+{
+#if BOINC
+    if (boinc_is_standalone()) return; // Only send trickles if we have a real BOINC server to talk to
+
+    time_t now = time(NULL);
+
+    if (difftime(now, last_trickle) > TRICKLE_PERIOD)
+    {
+        last_trickle = now;
+
+        double progress = boinc_get_fraction_done();
+        double cpu;
+        boinc_wu_cpu_time(cpu);
+        APP_INIT_DATA init_data;
+        boinc_get_init_data(init_data);
+        double run = boinc_elapsed_time() + init_data.starting_elapsed_time;
+
+        char msg[512];
+        sprintf(msg, "<trickle_up>\n"
+                    "   <progress>%f</progress>\n"
+                    "   <cputime>%f</cputime>\n"
+                    "   <runtime>%f</runtime>\n"
+                    "</trickle_up>\n",
+                     progress, cpu, run  );
+        char variety[64];
+        sprintf(variety, "gcwsieve_progress");
+        boinc_send_trickle_up(variety, msg);
+    }
+#else
+    return;
+#endif
+}
+      
 
 /* Return the fraction of the current range that has been done.
  */

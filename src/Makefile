@@ -202,7 +202,7 @@ OPT_CFLAGS=-O3 -ffast-math -mdynamic-no-pic -march=prescott -arch i386 -fomit-fr
 CPPFLAGS=-Wall -DDEFAULT_L1_CACHE_SIZE=32 -DDEFAULT_L2_CACHE_SIZE=512
 ASFLAGS=-mdynamic-no-pic -march=prescott -arch i386
 LDFLAGS=-arch i386 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5
-BOINC_CPPFLAGS=-DBOINC -I../../boinc_707/api
+BOINC_CPPFLAGS=-DBOINC -I../../boinc_707/api -I../../boinc_707/ -I../../boinc_707/lib
 BOINC_LDFLAGS=-L../../boinc_707/mac_build/build/Deployment
 BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread
 endif
@@ -215,7 +215,7 @@ OPT_CFLAGS=-O3 -ffast-math -march=nocona -arch x86_64 -fomit-frame-pointer -isys
 CPPFLAGS=-Wall -DDEFAULT_L1_CACHE_SIZE=32 -DDEFAULT_L2_CACHE_SIZE=512
 ASFLAGS=-mdynamic-no-pic -march=nocona -arch x86_64
 LDFLAGS=-arch x86_64 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.9.sdk -mmacosx-version-min=10.5
-BOINC_CPPFLAGS=-DBOINC -I../../boinc_707/api
+BOINC_CPPFLAGS=-DBOINC -I../../boinc_707/api -I../../boinc_707/ -I../../boinc_707/lib
 BOINC_LDFLAGS=-L../../boinc_707/mac_build/build/Deployment
 BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread
 endif
@@ -315,11 +315,14 @@ override CFLAGS:=$(OPT_CFLAGS) $(CFLAGS)
 LDFLAGS+= -s
 endif
 
+CXXFLAGS=$(CFLAGS) -fpermissive
+
 # Add BOINC flags, if any.
 CPPFLAGS += $(BOINC_CPPFLAGS)
 LDFLAGS += $(BOINC_LDFLAGS)
 
 CC?=gcc
+CXX=$(CC)
 LDLIBS=-lm $(BOINC_LIBS)
 
 TAR=tar -c
@@ -345,7 +348,7 @@ SIEVE_OBJS=gcwsieve.o arithmetic.o begin.o bitmap.o btop-generic.o clock.o \
 
 SOURCES=Makefile arithmetic.h arithmetic.c begin.c bitmap.h bitmap.c clock.c \
 	config.h cpu.c events.c factors.c files.c memset_fast32.h mm_malloc.h \
-	primes.c priority.c sieve.c terms.c threads.c gcwsieve.h gcwsieve.c \
+	primes.c priority.c sieve.c terms.c threads.c gcwsieve.h gcwsieve.cpp \
 	util.c \
 	asm-i386-gcc.h asm-i386-msc.h asm-ppc64.c asm-ppc64.h \
 	asm-x86-64-gcc.h asm-x86-64-msc.h \
@@ -410,7 +413,7 @@ primes.o: primes.c gcwsieve.h bitmap.h config.h memset_fast32.h $(ASM_H)
 priority.o: priority.c gcwsieve.h config.h
 terms.o: terms.c gcwsieve.h config.h
 threads.o: threads.c gcwsieve.h config.h
-gcwsieve.o: gcwsieve.c gcwsieve.h config.h version.h
+gcwsieve.o: gcwsieve.cpp gcwsieve.h config.h version.h
 util.o: util.c gcwsieve.h config.h mm_malloc.h
 mulmod-i386.o: mulmod-i386.S config.h
 mulmod-x86-64.o: mulmod-x86-64.S config.h

@@ -271,15 +271,15 @@ uint64_t read_checkpoint(void)
 {
   FILE *file;
   uint64_t p;
-  double cpu_secs = 0.0, elapsed_secs = 0.0;
+  double cpu_secs = 0.0, elapsed_secs = 0.0, trickle = 0.0;
   uint32_t count = 0;
 
   if ((file = fopen(checkpoint_file_name,"r")) == NULL)
     return p_min;
 
   if (fscanf(file,"pmin=%"SCNu64",factor_count=%"SCNu32
-             ",cpu_secs=%lf,frac_done=%*f,elapsed_secs=%lf",
-             &p,&count,&cpu_secs,&elapsed_secs) < 1)
+             ",cpu_secs=%lf,frac_done=%*f,elapsed_secs=%lf,last_trickle=%lf",
+             &p,&count,&cpu_secs,&elapsed_secs,&trickle) < 1)
     error("Cannot read checkpoint from `%s'.",checkpoint_file_name);
 
   xfclose(file,checkpoint_file_name);
@@ -291,6 +291,7 @@ uint64_t read_checkpoint(void)
     factor_count = count;
     set_accumulated_cpu(cpu_secs);
     set_accumulated_time(elapsed_secs);
+    last_trickle = (time_t)trickle;
     return p;
   }
 
@@ -304,9 +305,9 @@ void write_checkpoint(uint64_t p)
   if ((file = xfopen(checkpoint_file_name,"w",warning)) != NULL)
   {
     fprintf(file,"pmin=%"PRIu64",factor_count=%"PRIu32
-            ",cpu_secs=%.3f,frac_done=%f,elapsed_secs=%.3f\n",
+            ",cpu_secs=%.3f,frac_done=%f,elapsed_secs=%.3f,last_trickle=%lf\n",
             p,factor_count,get_accumulated_cpu(),frac_done(p),
-            get_accumulated_time());
+            get_accumulated_time(), (double)last_trickle);
     xfclose(file,checkpoint_file_name);
   }
 }

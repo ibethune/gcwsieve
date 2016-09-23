@@ -14,6 +14,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include "config.h"
+#include <time.h>
 
 #define XSTR(ARG) STR(ARG)
 #define STR(ARG) #ARG
@@ -70,6 +71,8 @@
 #else
 #define DEFAULT_SAVE_PERIOD 3600
 #endif
+
+#define TRICKLE_PERIOD 86400.0 // Once per day
 
 /* Set CHECK_FACTORS=1 to double check found factors.
  */
@@ -265,6 +268,7 @@ void set_cpu_affinity(int cpu_number);
 
 /* gcwsieve.c */
 
+extern time_t last_trickle;
 extern const char *factors_file_name;
 extern const char *output_file_name;
 extern const char *checkpoint_file_name;
@@ -290,6 +294,7 @@ extern int smallp_phase;
 extern uint32_t base_opt;
 extern int cw_opt[2];
 
+void handle_trickle_up();
 double frac_done(uint64_t p);
 void print_status(uint64_t p, uint32_t p_per_sec
 #if REPORT_PRIMES_OPT
