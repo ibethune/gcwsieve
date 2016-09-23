@@ -159,9 +159,9 @@ LDFLAGS=-m32
 PATH1_FLAGS=-DCODE_PATH=1 -O3
 PATH2_FLAGS=-DCODE_PATH=2 -O3 -march=pentium4 -mtune=k8
 MULTI_OBJS=sieve2.o
-BOINC_CPPFLAGS=-DBOINC -I../../boinc_32/include/boinc
-BOINC_LDFLAGS=-L../../boinc_32/lib
-BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread
+BOINC_CPPFLAGS=-DBOINC -I../../boinc_32_707/include/boinc
+BOINC_LDFLAGS=-L../../boinc_32_707/lib
+BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread -lm
 endif
 
 # Runs on any x86-64 (in 64-bit mode), seperate code paths for AMD/Intel.
@@ -175,8 +175,8 @@ LDFLAGS=-m64
 PATH1_FLAGS=-DCODE_PATH=1 -O3 -msse3
 PATH2_FLAGS=-DCODE_PATH=2 -O3
 MULTI_OBJS=sieve2.o
-BOINC_CPPFLAGS=-DBOINC -I../../boinc_64/include/boinc
-BOINC_LDFLAGS=-L../../boinc_64/lib
+BOINC_CPPFLAGS=-DBOINC -I../../boinc_64_707/include/boinc
+BOINC_LDFLAGS=-L../../boinc_64_707/lib
 BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread
 endif
 
