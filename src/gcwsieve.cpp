@@ -774,7 +774,7 @@ static void update_work_file(const char *file_name)
 // Function to control trickles to the BOINC server
 // Adapted from genefer (http://www.assembla.com/spaces/genefer)
 
-void handle_trickle_up()
+void handle_trickle_up(uint64_t p)
 {
 #if BOINC
     if (boinc_is_standalone()) return; // Only send trickles if we have a real BOINC server to talk to
@@ -785,20 +785,15 @@ void handle_trickle_up()
     {
         last_trickle = now;
 
-        double progress = boinc_get_fraction_done();
-        double cpu;
-        boinc_wu_cpu_time(cpu);
-        APP_INIT_DATA init_data;
-        boinc_get_init_data(init_data);
-        double run = boinc_elapsed_time() + init_data.starting_elapsed_time;
-
         char msg[512];
-        sprintf(msg, "<trickle_up>\n"
+        sprintf(msg,"<trickle_up>\n"
                     "   <progress>%f</progress>\n"
                     "   <cputime>%f</cputime>\n"
                     "   <runtime>%f</runtime>\n"
                     "</trickle_up>\n",
-                     progress, cpu, run  );
+                     frac_done(p),
+                     get_accumulated_cpu(),
+                     get_accumulated_time());
         char variety[64];
         sprintf(variety, "gcwsieve_progress");
         boinc_send_trickle_up(variety, msg);

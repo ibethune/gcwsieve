@@ -240,7 +240,7 @@ void process_events(uint64_t current_prime)
         write_abc_file(0,current_prime,output_file_name);
 #if BOINC
         boinc_checkpoint_completed();
-        handle_trickle_up();
+        handle_trickle_up(current_prime);
       }
 #endif
     }

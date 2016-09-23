@@ -294,7 +294,7 @@ extern int smallp_phase;
 extern uint32_t base_opt;
 extern int cw_opt[2];
 
-void handle_trickle_up();
+void handle_trickle_up(uint64_t p);
 double frac_done(uint64_t p);
 void print_status(uint64_t p, uint32_t p_per_sec
 #if REPORT_PRIMES_OPT

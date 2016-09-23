@@ -1,5 +1,6 @@
 Version 1.3.9: (Under development)
 Added a "end of sieve" message to the output file when rance is completed
+Added BOINC trickle progress reporting
 
 Version 1.3.8: (Posted 30 September 2009, source and BOINC executables only)
 Instead of an empty factors file, create a file containing "no factors" for
