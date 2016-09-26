@@ -33,6 +33,8 @@ extern "C" {
 // Fix for BOINC's tendency to redefine 64-bit format macros on Windows/MinGW
 #if defined (_WIN32)
 #  define UINT64_FORMAT "I64u"
+#elif defined (__linux__) && (__WORDSIZE == 64)
+#  define UINT64_FORMAT "lu"
 #else
 #  define UINT64_FORMAT "llu"
 #endif
