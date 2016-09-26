@@ -77,7 +77,7 @@ static void log_msg(int print, const char *msg1, const char *msg2)
       time(&tm);
       if ((tm_struct = localtime(&tm)) != NULL)
         if (strftime(tm_buf,sizeof(tm_buf),LOG_STRFTIME_FORMAT,tm_struct) != 0)
-          fprintf(log_file,tm_buf);
+          fputs(tm_buf,log_file);
       fprintf(log_file,"%s%s\n",msg1,msg2);
       fclose(log_file);
     }

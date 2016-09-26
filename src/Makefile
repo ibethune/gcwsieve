@@ -159,6 +159,22 @@ LDFLAGS=-m32
 PATH1_FLAGS=-DCODE_PATH=1 -O3
 PATH2_FLAGS=-DCODE_PATH=2 -O3 -march=pentium4 -mtune=k8
 MULTI_OBJS=sieve2.o
+BOINC_CPPFLAGS=-DBOINC -I../../boinc_32/include/boinc
+BOINC_LDFLAGS=-L../../boinc_32/lib
+BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread -lm
+endif
+
+# Runs on any x86, uses SSE2 if available. Setup for Linux
+#
+ifeq ($(strip $(ARCH)),x86-linux)
+DEBUG_CFLAGS=-g -march=i586 -mtune=k8 -m32
+OPT_CFLAGS=-O2 -fomit-frame-pointer -ffast-math -march=i586 -mtune=k8 -m32
+CPPFLAGS=-Wall -DMULTI_PATH -DDEFAULT_L1_CACHE_SIZE=16 -DDEFAULT_L2_CACHE_SIZE=256
+ASFLAGS=-m32
+LDFLAGS=-m32
+PATH1_FLAGS=-DCODE_PATH=1 -O3
+PATH2_FLAGS=-DCODE_PATH=2 -O3 -march=pentium4 -mtune=k8
+MULTI_OBJS=sieve2.o
 BOINC_CPPFLAGS=-DBOINC -I../../boinc_32_707/include/boinc
 BOINC_LDFLAGS=-L../../boinc_32_707/lib
 BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread -lm
@@ -170,6 +186,22 @@ ifeq ($(strip $(ARCH)),x86-64)
 DEBUG_CFLAGS=-g -march=k8 -mno-3dnow -m64
 OPT_CFLAGS=-O2 -fomit-frame-pointer -ffast-math -march=k8 -mno-3dnow -m64
 CPPFLAGS=-Wall -DMULTI_PATH -DDEFAULT_L1_CACHE_SIZE=32 -DDEFAULT_L2_CACHE_SIZE=512 -DNEED_UNDERSCORE=0
+ASFLAGS=-m64
+LDFLAGS=-m64
+PATH1_FLAGS=-DCODE_PATH=1 -O3 -msse3
+PATH2_FLAGS=-DCODE_PATH=2 -O3
+MULTI_OBJS=sieve2.o
+BOINC_CPPFLAGS=-DBOINC -I../../boinc_64/include/boinc
+BOINC_LDFLAGS=-L../../boinc_64/lib
+BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread
+endif
+
+# Runs on any x86-64 (in 64-bit mode), seperate code paths for AMD/Intel.
+# Set up for Linux
+ifeq ($(strip $(ARCH)),x86-64-linux)
+DEBUG_CFLAGS=-g -march=k8 -mno-3dnow -m64
+OPT_CFLAGS=-O2 -fomit-frame-pointer -ffast-math -march=k8 -mno-3dnow -m64
+CPPFLAGS=-Wall -DMULTI_PATH -DDEFAULT_L1_CACHE_SIZE=32 -DDEFAULT_L2_CACHE_SIZE=512
 ASFLAGS=-m64
 LDFLAGS=-m64
 PATH1_FLAGS=-DCODE_PATH=1 -O3 -msse3
@@ -279,7 +311,21 @@ PATH1_FLAGS+= -DSWIZZLE=2
 PATH2_FLAGS+= -DSWIZZLE=4
 CPPFLAGS+= -DPREFETCH_OPT
 endif
+ifeq ($(strip $(ARCH)),x86-linux)
+ASM_OBJS=misc-i386.o mulmod-i386.o powmod-i386.o powmod-sse2.o btop-x86.o btop-x86-sse2.o
+LOOP_OBJS=loop-x86.o loop-x86-sse2.o loop-x86.p.o loop-x86-sse2.p.o
+PATH1_FLAGS+= -DSWIZZLE=2
+PATH2_FLAGS+= -DSWIZZLE=4
+CPPFLAGS+= -DPREFETCH_OPT
+endif
 ifeq ($(strip $(ARCH)),x86-64)
+ASM_OBJS=misc-x86-64.o mulmod-x86-64.o powmod-x86-64.o btop-x86-64.o
+LOOP_OBJS=loop-a64.o loop-a64.p.o loop-core2.o loop-core2.p.o
+PATH1_FLAGS+= -DSWIZZLE=4
+PATH2_FLAGS+= -DSWIZZLE=6
+CPPFLAGS+= -DPREFETCH_OPT
+endif
+ifeq ($(strip $(ARCH)),x86-64-linux)
 ASM_OBJS=misc-x86-64.o mulmod-x86-64.o powmod-x86-64.o btop-x86-64.o
 LOOP_OBJS=loop-a64.o loop-a64.p.o loop-core2.o loop-core2.p.o
 PATH1_FLAGS+= -DSWIZZLE=4
