@@ -21,12 +21,13 @@
 extern "C" {
 #include "gcwsieve.h"
 }
-#include "version.h"
+#include "gcwsieve-version.h"
 #include "arithmetic.h"
 
 #if BOINC
 #include "boinc_api.h"
 #include "app_ipc.h"
+#include "version.h"
 #endif
 
 #ifdef _MSC_VER
@@ -181,7 +182,7 @@ static char *get_boinc_file_name(const char *file_name)
   if (file_name != NULL)
   {
     boinc_resolve_filename(file_name,tmp_name,sizeof(tmp_name));
-    resolved_name = xmalloc(strlen(tmp_name)+1);
+    resolved_name = (char *)xmalloc(strlen(tmp_name)+1);
     strcpy(resolved_name,tmp_name);
   }
 
@@ -199,7 +200,7 @@ static char *per_process_file_name(const char *base_name, const char *suffix,
   len = strlen(base_name) + 1 + strlen(suffix) + 1;
   if (uid != NULL)
     len = len + strlen(uid) + 1;
-  name = xmalloc(len);
+  name = (char *)xmalloc(len);
   if (uid != NULL)
     sprintf(name,"%s-%s.%s",base_name,uid,suffix);
   else
@@ -752,7 +753,7 @@ static void update_work_file(const char *file_name)
 
   for (i = 0; i < MAX_WORK_LINES; i++)
   {
-    lines[i] = xmalloc(MAX_LINE_LENGTH);
+    lines[i] = (char *)xmalloc(MAX_LINE_LENGTH);
     if (fgets(lines[i],MAX_LINE_LENGTH,file) == NULL)
     {
       free(lines[i]);

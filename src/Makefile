@@ -210,6 +210,7 @@ endif
 # Intel x86_64 with OS X
 #
 ifeq ($(strip $(ARCH)),x86-64-osx)
+CC=gcc-mp-6
 DEBUG_CFLAGS=-g -O3 -ffast-math -mdynamic-no-pic -march=nocona -arch x86_64
 OPT_CFLAGS=-O3 -ffast-math -march=nocona -arch x86_64 -fomit-frame-pointer -isysroot /Developer/SDKs/MacOSX10.9.sdk -mmacosx-version-min=10.5
 CPPFLAGS=-Wall -DDEFAULT_L1_CACHE_SIZE=32 -DDEFAULT_L2_CACHE_SIZE=512
@@ -321,8 +322,7 @@ CXXFLAGS=$(CFLAGS) -fpermissive
 CPPFLAGS += $(BOINC_CPPFLAGS)
 LDFLAGS += $(BOINC_LDFLAGS)
 
-CC?=gcc
-CXX=$(CC)
+CXX = $(CC)
 LDLIBS=-lm $(BOINC_LIBS)
 
 TAR=tar -c
@@ -395,10 +395,10 @@ README.txt: README.txt.in
 
 gcwsieve: $(SIEVE_OBJS)
 
-version.h:
-	echo "#define MAJOR_VER $(MAJOR_VER)" > version.h
-	echo "#define MINOR_VER $(MINOR_VER)" >> version.h
-	echo "#define PATCH_VER $(PATCH_VER)" >> version.h
+gcwsieve-version.h:
+	echo "#define MAJOR_VER $(MAJOR_VER)" >  gcwsieve-version.h
+	echo "#define MINOR_VER $(MINOR_VER)" >> gcwsieve-version.h
+	echo "#define PATCH_VER $(PATCH_VER)" >> gcwsieve-version.h
 
 ASM_H=asm-i386-gcc.h asm-ppc64.h asm-x86-64-gcc.h
 arithmetic.o: arithmetic.c arithmetic.h $(ASM_H) config.h
@@ -413,7 +413,7 @@ primes.o: primes.c gcwsieve.h bitmap.h config.h memset_fast32.h $(ASM_H)
 priority.o: priority.c gcwsieve.h config.h
 terms.o: terms.c gcwsieve.h config.h
 threads.o: threads.c gcwsieve.h config.h
-gcwsieve.o: gcwsieve.cpp gcwsieve.h config.h version.h
+gcwsieve.o: gcwsieve.cpp gcwsieve.h config.h gcwsieve-version.h
 util.o: util.c gcwsieve.h config.h mm_malloc.h
 mulmod-i386.o: mulmod-i386.S config.h
 mulmod-x86-64.o: mulmod-x86-64.S config.h
@@ -470,4 +470,4 @@ clean:
 	rm -f *.o gcwsieve.log
 
 realclean: clean
-	rm -f $(PROGS) version.h $(DISTFILES)
+	rm -f $(PROGS) gcwsieve-version.h $(DISTFILES)
