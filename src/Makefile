@@ -46,6 +46,9 @@ ASSEMBLER=yes
 #BOINC_LDFLAGS=-L/home/geoff/development/boinc/lib64 -static-libgcc
 #BOINC_LIBS=-lboinc_api -lboinc /usr/lib/gcc/x86_64-linux-gnu/4.1.2/libstdc++.a -lpthread
 
+#default compiler is gcc (may be overridden below)
+CC=gcc
+
 # If ARCH not set above then these defauts will be used:
 #
 ifeq ($(strip $(ARCH)),)
@@ -153,7 +156,7 @@ endif
 ifeq ($(strip $(ARCH)),x86)
 DEBUG_CFLAGS=-g -march=i586 -mtune=k8 -m32
 OPT_CFLAGS=-O2 -fomit-frame-pointer -ffast-math -march=i586 -mtune=k8 -m32
-CPPFLAGS=-Wall -DMULTI_PATH -DDEFAULT_L1_CACHE_SIZE=16 -DDEFAULT_L2_CACHE_SIZE=256
+CPPFLAGS=-Wall -DMULTI_PATH -DDEFAULT_L1_CACHE_SIZE=16 -DDEFAULT_L2_CACHE_SIZE=256 -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS
 ASFLAGS=-m32
 LDFLAGS=-m32
 PATH1_FLAGS=-DCODE_PATH=1 -O3
@@ -161,7 +164,7 @@ PATH2_FLAGS=-DCODE_PATH=2 -O3 -march=pentium4 -mtune=k8
 MULTI_OBJS=sieve2.o
 BOINC_CPPFLAGS=-DBOINC -I../../boinc_32/include/boinc
 BOINC_LDFLAGS=-L../../boinc_32/lib
-BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread -lm
+BOINC_LIBS=-lboinc_api -lboinc -lstdc++
 endif
 
 # Runs on any x86, uses SSE2 if available. Setup for Linux
@@ -185,7 +188,7 @@ endif
 ifeq ($(strip $(ARCH)),x86-64)
 DEBUG_CFLAGS=-g -march=k8 -mno-3dnow -m64
 OPT_CFLAGS=-O2 -fomit-frame-pointer -ffast-math -march=k8 -mno-3dnow -m64
-CPPFLAGS=-Wall -DMULTI_PATH -DDEFAULT_L1_CACHE_SIZE=32 -DDEFAULT_L2_CACHE_SIZE=512 -DNEED_UNDERSCORE=0
+CPPFLAGS=-Wall -DMULTI_PATH -DDEFAULT_L1_CACHE_SIZE=32 -DDEFAULT_L2_CACHE_SIZE=512 -DNEED_UNDERSCORE=0 -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS
 ASFLAGS=-m64
 LDFLAGS=-m64
 PATH1_FLAGS=-DCODE_PATH=1 -O3 -msse3
@@ -193,7 +196,7 @@ PATH2_FLAGS=-DCODE_PATH=2 -O3
 MULTI_OBJS=sieve2.o
 BOINC_CPPFLAGS=-DBOINC -I../../boinc_64/include/boinc
 BOINC_LDFLAGS=-L../../boinc_64/lib
-BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread
+BOINC_LIBS=-lboinc_api -lboinc -lstdc++ 
 endif
 
 # Runs on any x86-64 (in 64-bit mode), seperate code paths for AMD/Intel.

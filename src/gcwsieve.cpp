@@ -8,12 +8,12 @@
    (at your option) any later version.
 */
 
-#include <assert.h>
 #include <inttypes.h>
+#include <stdio.h>
+#include <assert.h>
 #include <math.h>
 #include <signal.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include <getopt.h>
@@ -28,6 +28,13 @@ extern "C" {
 #include "boinc_api.h"
 #include "app_ipc.h"
 #include "version.h"
+#endif
+
+// Fix for BOINC's tendency to redefine 64-bit format macros on Windows/MinGW
+#if defined (_WIN32)
+#  define UINT64_FORMAT "I64u"
+#else
+#  define UINT64_FORMAT "llu"
 #endif
 
 #ifdef _MSC_VER
@@ -713,7 +720,7 @@ static int read_work_file(const char *file_name)
   report(0,"Reading work file `%s' ...",file_name);
   file = xfopen(file_name,"r",error);
 
-  ret = fscanf(file,"%" SCNu64 "%*[-,\t ]%" SCNu64,&p0,&p1);
+  ret = fscanf(file,"%" UINT64_FORMAT "%*[-,\t ]%" UINT64_FORMAT,&p0,&p1);
   xfclose(file,file_name);
   switch (ret)
   {
@@ -723,10 +730,10 @@ static int read_work_file(const char *file_name)
 
     case 2:
       if (p0 >= p1)
-        error("Bad range %" PRIu64 ",%" PRIu64 " in `%s'.",p0,p1,file_name);
+        error("Bad range %" UINT64_FORMAT ",%" UINT64_FORMAT " in `%s'.",p0,p1,file_name);
       if (p1 > UINT64_MAX/RANGE_BLOCK)
-        error("Range end %" PRIu64 " too high in `%s'.",p1,file_name);
-      report(1,"Using range %" PRIu64 "*10^9 <= p <= %" PRIu64 "*10^9 from `%s'.",
+        error("Range end %" UINT64_FORMAT " too high in `%s'.",p1,file_name);
+      report(1,"Using range %" UINT64_FORMAT "*10^9 <= p <= %" UINT64_FORMAT "*10^9 from `%s'.",
              p0,p1,file_name);
       p_min = p0*RANGE_BLOCK;
       p_max = p1*RANGE_BLOCK;
@@ -828,7 +835,7 @@ void print_status(uint64_t p, uint32_t p_per_sec
   if (toggle && factor_count && p_per_sec)
   {
     uint64_t p_per_factor = (p-work_pmin)/factor_count;
-    snprintf(buf1,sizeof(buf1),"%" PRIu64 " sec/factor",p_per_factor/p_per_sec);
+    snprintf(buf1,sizeof(buf1),"%" UINT64_FORMAT " sec/factor",p_per_factor/p_per_sec);
   }
   else
   {
@@ -851,7 +858,7 @@ void print_status(uint64_t p, uint32_t p_per_sec
     snprintf(buf2,sizeof(buf2),"%" PRIu32 " p/sec",p_per_sec);
 
 
-  report(0,"p=%" PRIu64 ", %s, %" PRIu32 " factor%s, %.1f%% done, %s",
+  report(0,"p=%" UINT64_FORMAT ", %s, %" PRIu32 " factor%s, %.1f%% done, %s",
          p,buf2,factor_count,plural(factor_count),100.0*frac_done(p),buf1);
 
 #if BOINC
@@ -874,8 +881,8 @@ void start_gcwsieve(void)
     report(1,"Expecting to find factors for about %.2f terms.",
            expected_factors(ncount[0]+ncount[1],work_pmin,p_max));
 
-  logger(1,"%s started: %" PRIu32 " <= n <= %" PRIu32 ", %" PRIu64 " <= p <= %"
-         PRIu64, NAME " " XSTR(MAJOR_VER) "." XSTR(MINOR_VER) "." XSTR(PATCH_VER),
+  logger(1,"%s started: %" PRIu32 " <= n <= %" PRIu32 ", %" UINT64_FORMAT " <= p <= %"
+         UINT64_FORMAT, NAME " " XSTR(MAJOR_VER) "." XSTR(MINOR_VER) "." XSTR(PATCH_VER),
          n_min, n_max, p_min, p_max);
 
   start_date = time(NULL);
@@ -883,7 +890,7 @@ void start_gcwsieve(void)
 
 void finish_gcwsieve(const char *reason, uint64_t p)
 {
-  logger(1,"%s stopped: at p=%" PRIu64 " because %s.",
+  logger(1,"%s stopped: at p=%" UINT64_FORMAT " because %s.",
          NAME " " XSTR(MAJOR_VER) "." XSTR(MINOR_VER) "." XSTR(PATCH_VER),p,reason);
   write_abc_file(1,p,output_file_name);
 
