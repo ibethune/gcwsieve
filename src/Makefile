@@ -174,7 +174,7 @@ DEBUG_CFLAGS=-g -march=i586 -mtune=k8 -m32
 OPT_CFLAGS=-O2 -fomit-frame-pointer -ffast-math -march=i586 -mtune=k8 -m32
 CPPFLAGS=-Wall -DMULTI_PATH -DDEFAULT_L1_CACHE_SIZE=16 -DDEFAULT_L2_CACHE_SIZE=256
 ASFLAGS=-m32
-LDFLAGS=-m32
+LDFLAGS=-m32 -static
 PATH1_FLAGS=-DCODE_PATH=1 -O3
 PATH2_FLAGS=-DCODE_PATH=2 -O3 -march=pentium4 -mtune=k8
 MULTI_OBJS=sieve2.o
@@ -206,13 +206,13 @@ DEBUG_CFLAGS=-g -march=k8 -mno-3dnow -m64
 OPT_CFLAGS=-O2 -fomit-frame-pointer -ffast-math -march=k8 -mno-3dnow -m64
 CPPFLAGS=-Wall -DMULTI_PATH -DDEFAULT_L1_CACHE_SIZE=32 -DDEFAULT_L2_CACHE_SIZE=512
 ASFLAGS=-m64
-LDFLAGS=-m64
+LDFLAGS=-m64 -static
 PATH1_FLAGS=-DCODE_PATH=1 -O3 -msse3
 PATH2_FLAGS=-DCODE_PATH=2 -O3
 MULTI_OBJS=sieve2.o
 BOINC_CPPFLAGS=-DBOINC -I../../boinc_64_707/include/boinc
 BOINC_LDFLAGS=-L../../boinc_64_707/lib
-BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread
+BOINC_LIBS=-lboinc_api -lboinc -lstdc++ -lpthread -lm
 endif
 
 # Same as ARCH=x86-64 but allow for bugs in GCC 4.3.0.
