@@ -339,7 +339,7 @@ static void check_p_range(void)
   uint32_t lowlim = MAX(n_max,b_term);
 
   if (p_min <= lowlim || p_min>=p_max || p_max >= UINT64_C(1)<<MOD64_MAX_BITS)
-    error("Sieve range P0 <= p <= P1 must be in %"PRIu32" < P0 < P1 < 2^%u.\n",
+    error("Sieve range P0 <= p <= P1 must be in %" PRIu32 " < P0 < P1 < 2^%u.\n",
           lowlim, (unsigned int)MOD64_MAX_BITS);
 #endif
 }
@@ -713,7 +713,7 @@ static int read_work_file(const char *file_name)
   report(0,"Reading work file `%s' ...",file_name);
   file = xfopen(file_name,"r",error);
 
-  ret = fscanf(file,"%"SCNu64"%*[-,\t ]%"SCNu64,&p0,&p1);
+  ret = fscanf(file,"%" SCNu64 "%*[-,\t ]%" SCNu64,&p0,&p1);
   xfclose(file,file_name);
   switch (ret)
   {
@@ -723,10 +723,10 @@ static int read_work_file(const char *file_name)
 
     case 2:
       if (p0 >= p1)
-        error("Bad range %"PRIu64",%"PRIu64" in `%s'.",p0,p1,file_name);
+        error("Bad range %" PRIu64 ",%" PRIu64 " in `%s'.",p0,p1,file_name);
       if (p1 > UINT64_MAX/RANGE_BLOCK)
-        error("Range end %"PRIu64" too high in `%s'.",p1,file_name);
-      report(1,"Using range %"PRIu64"*10^9 <= p <= %"PRIu64"*10^9 from `%s'.",
+        error("Range end %" PRIu64 " too high in `%s'.",p1,file_name);
+      report(1,"Using range %" PRIu64 "*10^9 <= p <= %" PRIu64 "*10^9 from `%s'.",
              p0,p1,file_name);
       p_min = p0*RANGE_BLOCK;
       p_max = p1*RANGE_BLOCK;
@@ -828,7 +828,7 @@ void print_status(uint64_t p, uint32_t p_per_sec
   if (toggle && factor_count && p_per_sec)
   {
     uint64_t p_per_factor = (p-work_pmin)/factor_count;
-    snprintf(buf1,sizeof(buf1),"%"PRIu64" sec/factor",p_per_factor/p_per_sec);
+    snprintf(buf1,sizeof(buf1),"%" PRIu64 " sec/factor",p_per_factor/p_per_sec);
   }
   else
   {
@@ -845,13 +845,13 @@ void print_status(uint64_t p, uint32_t p_per_sec
 
 #if REPORT_PRIMES_OPT
   if (report_primes_opt)
-    snprintf(buf2,sizeof(buf2),"%"PRIu32" primes/sec",primes_per_sec);
+    snprintf(buf2,sizeof(buf2),"%" PRIu32 " primes/sec",primes_per_sec);
   else
 #endif
-    snprintf(buf2,sizeof(buf2),"%"PRIu32" p/sec",p_per_sec);
+    snprintf(buf2,sizeof(buf2),"%" PRIu32 " p/sec",p_per_sec);
 
 
-  report(0,"p=%"PRIu64", %s, %"PRIu32" factor%s, %.1f%% done, %s",
+  report(0,"p=%" PRIu64 ", %s, %" PRIu32 " factor%s, %.1f%% done, %s",
          p,buf2,factor_count,plural(factor_count),100.0*frac_done(p),buf1);
 
 #if BOINC
@@ -874,8 +874,8 @@ void start_gcwsieve(void)
     report(1,"Expecting to find factors for about %.2f terms.",
            expected_factors(ncount[0]+ncount[1],work_pmin,p_max));
 
-  logger(1,"%s started: %"PRIu32" <= n <= %"PRIu32", %"PRIu64" <= p <= %"
-         PRIu64, NAME " "XSTR(MAJOR_VER)"."XSTR(MINOR_VER)"."XSTR(PATCH_VER),
+  logger(1,"%s started: %" PRIu32 " <= n <= %" PRIu32 ", %" PRIu64 " <= p <= %"
+         PRIu64, NAME " " XSTR(MAJOR_VER) "." XSTR(MINOR_VER) "." XSTR(PATCH_VER),
          n_min, n_max, p_min, p_max);
 
   start_date = time(NULL);
@@ -883,11 +883,11 @@ void start_gcwsieve(void)
 
 void finish_gcwsieve(const char *reason, uint64_t p)
 {
-  logger(1,"%s stopped: at p=%"PRIu64" because %s.",
-         NAME " "XSTR(MAJOR_VER)"."XSTR(MINOR_VER)"."XSTR(PATCH_VER),p,reason);
+  logger(1,"%s stopped: at p=%" PRIu64 " because %s.",
+         NAME " " XSTR(MAJOR_VER) "." XSTR(MINOR_VER) "." XSTR(PATCH_VER),p,reason);
   write_abc_file(1,p,output_file_name);
 
-  logger(verbose_opt,"Found factors for %"PRIu32" term%s in %.3f sec."
+  logger(verbose_opt,"Found factors for %" PRIu32 " term%s in %.3f sec."
          " (expected about %.2f)",factor_count,plural(factor_count),
          get_accumulated_time(),expected_factors(ncount[0]+ncount[1],work_pmin,p));
 

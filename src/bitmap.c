@@ -74,8 +74,8 @@ uint_fast32_t *make_bitmap(uint_fast32_t n, const char *msg)
     bitmap[size-1] = UINT_FAST32_MAX; /* ~0; sentinel */
   }
   else if (msg != NULL)
-    error("Failed to allocate %"PRIuFAST32" Kb for %s.",
-          size*sizeof(uint_fast32_t)/1024,msg);
+    error("Failed to allocate %" PRIuFAST32 " Kb for %s.",
+          (uint_fast32_t)(size*sizeof(uint_fast32_t)/1024),msg);
 
   return bitmap;
 }

@@ -24,6 +24,7 @@ static double cpu_seconds(void)
   ret = getrusage(RUSAGE_SELF, &r);
 
   assert(ret == 0);
+  _unused(ret);
 
   return (double)(r.ru_utime.tv_sec + r.ru_stime.tv_sec)
     + (double)(r.ru_utime.tv_usec + r.ru_stime.tv_usec) / 1000000;

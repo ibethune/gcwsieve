@@ -19,6 +19,9 @@
 #define XSTR(ARG) STR(ARG)
 #define STR(ARG) #ARG
 
+// Avoid warnings from unused variables in assert()s
+#define _unused(x) ((void)(x))
+
 /* Also check config.h for compiler settings.
  */
 
